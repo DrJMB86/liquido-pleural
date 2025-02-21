@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Análisis de Líquido Pleural</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            overflow-y: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #F7E6C4; /* Color amarillento para mayor comodidad visual */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+        .card {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="root" class="container"></div>
+    
+    <script type="text/babel">
+        function PleuralAnalysis() {
+            const [proteinPleural, setProteinPleural] = React.useState("");
+            const [proteinSerum, setProteinSerum] = React.useState("");
+            const [ldhPleural, setLdhPleural] = React.useState("");
+            const [ldhSerum, setLdhSerum] = React.useState("");
+            const [result, setResult] = React.useState(null);
+            const [info, setInfo] = React.useState("");
+
+            const analyzeFluid = () => {
+                if (!proteinPleural || !proteinSerum || !ldhPleural || !ldhSerum) {
+                    setResult(null);
+                    setInfo("Por favor, ingrese todos los valores antes de analizar.");
+                    return;
+                }
+                
+                const proteinRatio = parseFloat(proteinPleural) / parseFloat(proteinSerum);
+                const ldhRatio = parseFloat(ldhPleural) / parseFloat(ldhSerum);
+                const ldhUpperLimit = 200;
+
+                if (proteinRatio > 0.5 || ldhRatio > 0.6 || parseFloat(ldhPleural) > ldhUpperLimit) {
+                    setResult("Exudado");
+                    setInfo("Posibles causas: neumonía, tuberculosis, cáncer, enfermedades autoinmunes. El líquido suele ser turbio o hemorrágico.");
+                } else {
+                    setResult("Trasudado");
+                    setInfo("Posibles causas: insuficiencia cardíaca, cirrosis hepática, síndrome nefrótico. El líquido suele ser claro y de baja densidad.");
+                }
+            };
+
+            const resetForm = () => {
+                setProteinPleural("");
+                setProteinSerum("");
+                setLdhPleural("");
+                setLdhSerum("");
+                setResult(null);
+                setInfo("");
+            };
+
+            return (
+                <div className="container">
+                    <div className="card p-4 shadow-lg text-center">
+                        <h2>Análisis de Líquido Pleural</h2>
+                        <label>Proteínas en líquido pleural (g/dL)</label>
+                        <input type="number" className="form-control" value={proteinPleural} onChange={(e) => setProteinPleural(e.target.value)} />
+                        <label>Proteínas en suero (g/dL)</label>
+                        <input type="number" className="form-control" value={proteinSerum} onChange={(e) => setProteinSerum(e.target.value)} />
+                        <label>LDH en líquido pleural (U/L)</label>
+                        <input type="number" className="form-control" value={ldhPleural} onChange={(e) => setLdhPleural(e.target.value)} />
+                        <label>LDH en suero (U/L)</label>
+                        <input type="number" className="form-control" value={ldhSerum} onChange={(e) => setLdhSerum(e.target.value)} />
+                        <button className="btn btn-primary mt-3 w-100" onClick={analyzeFluid}>Analizar</button>
+                        <button className="btn btn-secondary mt-2 w-100" onClick={resetForm}>Reiniciar</button>
+                        {info && (
+                            <div className="mt-4 text-center">
+                                <p className="text-sm mt-2">{info}</p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="image-container">
+                        <img src="https://i0.wp.com/clinicalproblemsolving.com/wp-content/uploads/2022/05/Derrame-Pleural.jpg?w=3600&ssl=1" alt="Imagen de Derrame Pleural" />
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<PleuralAnalysis />);
+    </script>
+    
+    <footer>
+        <p class="text-muted">Esta herramienta ha sido creada por José María Barcala.</p>
+    </footer>
+</body>
+</html>
